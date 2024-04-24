@@ -7,19 +7,39 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B749F422BD7ECD50029A3FF /* FingerSpelling-DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3B749F402BD7ECD50029A3FF /* FingerSpelling-DataModel.xcdatamodeld */; };
+		3B749F512BD7F0620029A3FF /* MulticastDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B749F502BD7F0620029A3FF /* MulticastDelegate.swift */; };
+		3B749F532BD7F0D40029A3FF /* DatabaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B749F522BD7F0D40029A3FF /* DatabaseProtocol.swift */; };
+		3B749F582BD7F1850029A3FF /* Settings+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B749F542BD7F1850029A3FF /* Settings+CoreDataClass.swift */; };
+		3B749F592BD7F1850029A3FF /* Settings+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B749F552BD7F1850029A3FF /* Settings+CoreDataProperties.swift */; };
+		3B749F5A2BD7F1850029A3FF /* Entry+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B749F562BD7F1850029A3FF /* Entry+CoreDataClass.swift */; };
+		3B749F5B2BD7F1850029A3FF /* Entry+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B749F572BD7F1850029A3FF /* Entry+CoreDataProperties.swift */; };
+		3B749F5D2BD7F2D50029A3FF /* CoreDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B749F5C2BD7F2D50029A3FF /* CoreDataController.swift */; };
+		3B8E25B72BD7E0B90037ECB9 /* HistoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8E25B62BD7E0B90037ECB9 /* HistoryController.swift */; };
+		3B8E25B92BD7E0D30037ECB9 /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8E25B82BD7E0D30037ECB9 /* SettingsController.swift */; };
 		3B9EBB0C2BB39D1B00F11B17 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9EBB0B2BB39D1B00F11B17 /* AppDelegate.swift */; };
 		3B9EBB0E2BB39D1B00F11B17 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9EBB0D2BB39D1B00F11B17 /* SceneDelegate.swift */; };
-		3B9EBB102BB39D1B00F11B17 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9EBB0F2BB39D1B00F11B17 /* ViewController.swift */; };
+		3B9EBB102BB39D1B00F11B17 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9EBB0F2BB39D1B00F11B17 /* MainViewController.swift */; };
 		3B9EBB132BB39D1B00F11B17 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 3B9EBB122BB39D1B00F11B17 /* Base */; };
 		3B9EBB152BB39D1D00F11B17 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B9EBB142BB39D1D00F11B17 /* Assets.xcassets */; };
 		3B9EBB182BB39D1D00F11B17 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 3B9EBB172BB39D1D00F11B17 /* Base */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3B749F412BD7ECD50029A3FF /* FingerSpelling-DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "FingerSpelling-DataModel.xcdatamodel"; sourceTree = "<group>"; };
+		3B749F502BD7F0620029A3FF /* MulticastDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticastDelegate.swift; sourceTree = "<group>"; };
+		3B749F522BD7F0D40029A3FF /* DatabaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseProtocol.swift; sourceTree = "<group>"; };
+		3B749F542BD7F1850029A3FF /* Settings+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Settings+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		3B749F552BD7F1850029A3FF /* Settings+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Settings+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		3B749F562BD7F1850029A3FF /* Entry+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Entry+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		3B749F572BD7F1850029A3FF /* Entry+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Entry+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		3B749F5C2BD7F2D50029A3FF /* CoreDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataController.swift; sourceTree = "<group>"; };
+		3B8E25B62BD7E0B90037ECB9 /* HistoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryController.swift; sourceTree = "<group>"; };
+		3B8E25B82BD7E0D30037ECB9 /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		3B9EBB082BB39D1B00F11B17 /* FingerSpelling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FingerSpelling.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B9EBB0B2BB39D1B00F11B17 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3B9EBB0D2BB39D1B00F11B17 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		3B9EBB0F2BB39D1B00F11B17 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		3B9EBB0F2BB39D1B00F11B17 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		3B9EBB122BB39D1B00F11B17 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3B9EBB142BB39D1D00F11B17 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3B9EBB172BB39D1D00F11B17 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -37,6 +57,40 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3B749F3F2BD7ECA70029A3FF /* Data Model */ = {
+			isa = PBXGroup;
+			children = (
+				3B749F542BD7F1850029A3FF /* Settings+CoreDataClass.swift */,
+				3B749F552BD7F1850029A3FF /* Settings+CoreDataProperties.swift */,
+				3B749F562BD7F1850029A3FF /* Entry+CoreDataClass.swift */,
+				3B749F572BD7F1850029A3FF /* Entry+CoreDataProperties.swift */,
+				3B749F402BD7ECD50029A3FF /* FingerSpelling-DataModel.xcdatamodeld */,
+			);
+			path = "Data Model";
+			sourceTree = "<group>";
+		};
+		3B749F4F2BD7F01D0029A3FF /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				3B749F502BD7F0620029A3FF /* MulticastDelegate.swift */,
+				3B749F522BD7F0D40029A3FF /* DatabaseProtocol.swift */,
+				3B749F5C2BD7F2D50029A3FF /* CoreDataController.swift */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
+		3B8E25B32BD7E0630037ECB9 /* Supporting */ = {
+			isa = PBXGroup;
+			children = (
+				3B9EBB0B2BB39D1B00F11B17 /* AppDelegate.swift */,
+				3B9EBB0D2BB39D1B00F11B17 /* SceneDelegate.swift */,
+				3B9EBB112BB39D1B00F11B17 /* Main.storyboard */,
+				3B9EBB142BB39D1D00F11B17 /* Assets.xcassets */,
+				3B9EBB162BB39D1D00F11B17 /* LaunchScreen.storyboard */,
+			);
+			path = Supporting;
+			sourceTree = "<group>";
+		};
 		3B9EBAFF2BB39D1B00F11B17 = {
 			isa = PBXGroup;
 			children = (
@@ -56,12 +110,12 @@
 		3B9EBB0A2BB39D1B00F11B17 /* FingerSpelling */ = {
 			isa = PBXGroup;
 			children = (
-				3B9EBB0B2BB39D1B00F11B17 /* AppDelegate.swift */,
-				3B9EBB0D2BB39D1B00F11B17 /* SceneDelegate.swift */,
-				3B9EBB0F2BB39D1B00F11B17 /* ViewController.swift */,
-				3B9EBB112BB39D1B00F11B17 /* Main.storyboard */,
-				3B9EBB142BB39D1D00F11B17 /* Assets.xcassets */,
-				3B9EBB162BB39D1D00F11B17 /* LaunchScreen.storyboard */,
+				3B9EBB0F2BB39D1B00F11B17 /* MainViewController.swift */,
+				3B8E25B62BD7E0B90037ECB9 /* HistoryController.swift */,
+				3B8E25B82BD7E0D30037ECB9 /* SettingsController.swift */,
+				3B749F3F2BD7ECA70029A3FF /* Data Model */,
+				3B749F4F2BD7F01D0029A3FF /* Database */,
+				3B8E25B32BD7E0630037ECB9 /* Supporting */,
 				3B9EBB192BB39D1D00F11B17 /* Info.plist */,
 			);
 			path = FingerSpelling;
@@ -138,7 +192,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B9EBB102BB39D1B00F11B17 /* ViewController.swift in Sources */,
+				3B749F422BD7ECD50029A3FF /* FingerSpelling-DataModel.xcdatamodeld in Sources */,
+				3B749F582BD7F1850029A3FF /* Settings+CoreDataClass.swift in Sources */,
+				3B749F592BD7F1850029A3FF /* Settings+CoreDataProperties.swift in Sources */,
+				3B749F5A2BD7F1850029A3FF /* Entry+CoreDataClass.swift in Sources */,
+				3B749F5B2BD7F1850029A3FF /* Entry+CoreDataProperties.swift in Sources */,
+				3B8E25B92BD7E0D30037ECB9 /* SettingsController.swift in Sources */,
+				3B749F532BD7F0D40029A3FF /* DatabaseProtocol.swift in Sources */,
+				3B749F512BD7F0620029A3FF /* MulticastDelegate.swift in Sources */,
+				3B749F5D2BD7F2D50029A3FF /* CoreDataController.swift in Sources */,
+				3B8E25B72BD7E0B90037ECB9 /* HistoryController.swift in Sources */,
+				3B9EBB102BB39D1B00F11B17 /* MainViewController.swift in Sources */,
 				3B9EBB0C2BB39D1B00F11B17 /* AppDelegate.swift in Sources */,
 				3B9EBB0E2BB39D1B00F11B17 /* SceneDelegate.swift in Sources */,
 			);
@@ -292,6 +356,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q4UJNTH9LA;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FingerSpelling/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -319,6 +384,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q4UJNTH9LA;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FingerSpelling/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -361,6 +427,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		3B749F402BD7ECD50029A3FF /* FingerSpelling-DataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				3B749F412BD7ECD50029A3FF /* FingerSpelling-DataModel.xcdatamodel */,
+			);
+			currentVersion = 3B749F412BD7ECD50029A3FF /* FingerSpelling-DataModel.xcdatamodel */;
+			name = "FingerSpelling-DataModel.xcdatamodeld";
+			path = "/Users/shreshthsaharan/Documents/Monash/FIT4701/FingerSpelling/FingerSpelling/Data Model/FingerSpelling-DataModel.xcdatamodeld";
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 3B9EBB002BB39D1B00F11B17 /* Project object */;
 }
