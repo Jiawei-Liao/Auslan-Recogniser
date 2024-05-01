@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B2B609D2BE224DF00DD6A20 /* CircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2B609C2BE224DF00DD6A20 /* CircleView.swift */; };
 		3B749F422BD7ECD50029A3FF /* FingerSpelling-DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3B749F402BD7ECD50029A3FF /* FingerSpelling-DataModel.xcdatamodeld */; };
 		3B749F512BD7F0620029A3FF /* MulticastDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B749F502BD7F0620029A3FF /* MulticastDelegate.swift */; };
 		3B749F532BD7F0D40029A3FF /* DatabaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B749F522BD7F0D40029A3FF /* DatabaseProtocol.swift */; };
@@ -26,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3B2B609C2BE224DF00DD6A20 /* CircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleView.swift; sourceTree = "<group>"; };
 		3B749F412BD7ECD50029A3FF /* FingerSpelling-DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "FingerSpelling-DataModel.xcdatamodel"; sourceTree = "<group>"; };
 		3B749F502BD7F0620029A3FF /* MulticastDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticastDelegate.swift; sourceTree = "<group>"; };
 		3B749F522BD7F0D40029A3FF /* DatabaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseProtocol.swift; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				3B749F4F2BD7F01D0029A3FF /* Database */,
 				3B8E25B32BD7E0630037ECB9 /* Supporting */,
 				3B9EBB192BB39D1D00F11B17 /* Info.plist */,
+				3B2B609C2BE224DF00DD6A20 /* CircleView.swift */,
 			);
 			path = FingerSpelling;
 			sourceTree = "<group>";
@@ -204,6 +207,7 @@
 				3B8E25B72BD7E0B90037ECB9 /* HistoryController.swift in Sources */,
 				3B9EBB102BB39D1B00F11B17 /* MainViewController.swift in Sources */,
 				3B9EBB0C2BB39D1B00F11B17 /* AppDelegate.swift in Sources */,
+				3B2B609D2BE224DF00DD6A20 /* CircleView.swift in Sources */,
 				3B9EBB0E2BB39D1B00F11B17 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
