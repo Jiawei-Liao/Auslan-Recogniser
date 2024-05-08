@@ -18,6 +18,7 @@
 		3B749F5D2BD7F2D50029A3FF /* CoreDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B749F5C2BD7F2D50029A3FF /* CoreDataController.swift */; };
 		3B8E25B72BD7E0B90037ECB9 /* HistoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8E25B62BD7E0B90037ECB9 /* HistoryController.swift */; };
 		3B8E25B92BD7E0D30037ECB9 /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8E25B82BD7E0D30037ECB9 /* SettingsController.swift */; };
+		3B8F28182BEB12A000CC456B /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8F28172BEB12A000CC456B /* CameraView.swift */; };
 		3B9EBB0C2BB39D1B00F11B17 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9EBB0B2BB39D1B00F11B17 /* AppDelegate.swift */; };
 		3B9EBB0E2BB39D1B00F11B17 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9EBB0D2BB39D1B00F11B17 /* SceneDelegate.swift */; };
 		3B9EBB102BB39D1B00F11B17 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9EBB0F2BB39D1B00F11B17 /* MainViewController.swift */; };
@@ -38,6 +39,7 @@
 		3B749F5C2BD7F2D50029A3FF /* CoreDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataController.swift; sourceTree = "<group>"; };
 		3B8E25B62BD7E0B90037ECB9 /* HistoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryController.swift; sourceTree = "<group>"; };
 		3B8E25B82BD7E0D30037ECB9 /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
+		3B8F28172BEB12A000CC456B /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		3B9EBB082BB39D1B00F11B17 /* FingerSpelling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FingerSpelling.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B9EBB0B2BB39D1B00F11B17 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3B9EBB0D2BB39D1B00F11B17 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -113,13 +115,14 @@
 			isa = PBXGroup;
 			children = (
 				3B9EBB0F2BB39D1B00F11B17 /* MainViewController.swift */,
+				3B8F28172BEB12A000CC456B /* CameraView.swift */,
 				3B8E25B62BD7E0B90037ECB9 /* HistoryController.swift */,
 				3B8E25B82BD7E0D30037ECB9 /* SettingsController.swift */,
+				3B2B609C2BE224DF00DD6A20 /* CircleView.swift */,
 				3B749F3F2BD7ECA70029A3FF /* Data Model */,
 				3B749F4F2BD7F01D0029A3FF /* Database */,
 				3B8E25B32BD7E0630037ECB9 /* Supporting */,
 				3B9EBB192BB39D1D00F11B17 /* Info.plist */,
-				3B2B609C2BE224DF00DD6A20 /* CircleView.swift */,
 			);
 			path = FingerSpelling;
 			sourceTree = "<group>";
@@ -198,6 +201,7 @@
 				3B749F422BD7ECD50029A3FF /* FingerSpelling-DataModel.xcdatamodeld in Sources */,
 				3B749F582BD7F1850029A3FF /* Settings+CoreDataClass.swift in Sources */,
 				3B749F592BD7F1850029A3FF /* Settings+CoreDataProperties.swift in Sources */,
+				3B8F28182BEB12A000CC456B /* CameraView.swift in Sources */,
 				3B749F5A2BD7F1850029A3FF /* Entry+CoreDataClass.swift in Sources */,
 				3B749F5B2BD7F1850029A3FF /* Entry+CoreDataProperties.swift in Sources */,
 				3B8E25B92BD7E0D30037ECB9 /* SettingsController.swift in Sources */,

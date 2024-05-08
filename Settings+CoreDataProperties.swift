@@ -18,6 +18,7 @@ extension Settings {
 
     @NSManaged public var rightHand: Bool
     @NSManaged public var mode: Int32
+    @NSManaged public var frontCamera: Bool
 
 }
 
