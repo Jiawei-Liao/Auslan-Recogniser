@@ -2,7 +2,7 @@
 //  CameraView.swift
 //  FingerSpelling
 //
-//  From https://github.com/r4ghu/iOS-Vision-HandPose
+//  Adapted from https://github.com/r4ghu/iOS-Vision-HandPose
 //
 
 import UIKit
@@ -16,9 +16,7 @@ class CameraView: UIView {
     private var overlayRingLayer = CAShapeLayer()
     private var overlayLittleLayer = CAShapeLayer()
     
-    var previewLayer: AVCaptureVideoPreviewLayer {
-        return layer as! AVCaptureVideoPreviewLayer
-    }
+    var previewLayer: AVCaptureVideoPreviewLayer!
     
     override class var layerClass: AnyClass {
         return AVCaptureVideoPreviewLayer.self
@@ -26,12 +24,10 @@ class CameraView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupOverlay()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupOverlay()
     }
     
     override func layoutSublayers(of layer: CALayer) {
@@ -45,7 +41,7 @@ class CameraView: UIView {
         }
     }
     
-    private func setupOverlay() {
+    func setupOverlay() {
         previewLayer.addSublayer(overlayThumbLayer)
         previewLayer.addSublayer(overlayIndexLayer)
         previewLayer.addSublayer(overlayMiddleLayer)

@@ -72,7 +72,7 @@
                                     <action selector="saveEntry:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jSN-lh-Ob5"/>
                                 </connections>
                             </button>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lbb-eB-V93">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lbb-eB-V93" customClass="CameraView" customModule="FingerSpelling" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="514"/>
                                 <color key="backgroundColor" systemColor="separatorColor"/>
                             </view>
@@ -105,7 +105,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="1kB-LH-5ud"/>
                     <connections>
-                        <outlet property="cameraView" destination="lbb-eB-V93" id="OJy-qi-kLG"/>
+                        <outlet property="cameraView" destination="lbb-eB-V93" id="oo9-26-raa"/>
                         <outlet property="commentsContainerView" destination="5Pw-l9-4nG" id="PFU-Cj-AL0"/>
                     </connections>
                 </viewController>
