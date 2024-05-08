@@ -4,6 +4,7 @@
         <attribute name="content" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Settings" representedClassName="Settings" syncable="YES">
+        <attribute name="frontCamera" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="mode" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="rightHand" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
     </entity>

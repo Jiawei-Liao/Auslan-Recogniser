@@ -134,14 +134,13 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Detection Mode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ymv-vF-Knb">
-                                <rect key="frame" x="20" y="194" width="122" height="21"/>
+                                <rect key="frame" x="20" y="235" width="122" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="KyE-qZ-CV6">
-                                <rect key="frame" x="16" y="223" width="361" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="KyE-qZ-CV6">
+                                <rect key="frame" x="16" y="271" width="361" height="32"/>
                                 <segments>
                                     <segment title="Character"/>
                                     <segment title="Words"/>
@@ -151,21 +150,42 @@
                                     <action selector="setDetectionMode:" destination="xoS-JR-wmP" eventType="valueChanged" id="fvf-6r-Ohc"/>
                                 </connections>
                             </segmentedControl>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Front Camera" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Djk-B6-cOI">
+                                <rect key="frame" x="20" y="184" width="104" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gB0-Se-3vY">
+                                <rect key="frame" x="233" y="179" width="51" height="31"/>
+                                <connections>
+                                    <action selector="setFrontCamera:" destination="xoS-JR-wmP" eventType="valueChanged" id="vOL-53-SZK"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="iPQ-1s-dVe"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="iPQ-1s-dVe" firstAttribute="trailing" secondItem="KyE-qZ-CV6" secondAttribute="trailing" constant="16" id="25F-KT-hM6"/>
                             <constraint firstItem="gN0-HR-1zb" firstAttribute="leading" secondItem="iPQ-1s-dVe" secondAttribute="leading" constant="20" id="EGC-U6-pbA"/>
                             <constraint firstItem="gN0-HR-1zb" firstAttribute="top" secondItem="iPQ-1s-dVe" secondAttribute="top" constant="30" id="EK5-ce-ZOM"/>
                             <constraint firstItem="ZJ9-tG-754" firstAttribute="top" secondItem="iPQ-1s-dVe" secondAttribute="top" constant="25" id="Ezd-ex-Lnc"/>
-                            <constraint firstItem="ymv-vF-Knb" firstAttribute="top" secondItem="gN0-HR-1zb" secondAttribute="bottom" constant="40" id="F9p-ic-3VG"/>
+                            <constraint firstItem="Djk-B6-cOI" firstAttribute="top" secondItem="gN0-HR-1zb" secondAttribute="bottom" constant="30" id="NDW-hx-7GH"/>
+                            <constraint firstItem="KyE-qZ-CV6" firstAttribute="leading" secondItem="iPQ-1s-dVe" secondAttribute="leading" constant="16" id="Ojc-Sc-gW9"/>
+                            <constraint firstItem="gB0-Se-3vY" firstAttribute="top" secondItem="ZJ9-tG-754" secondAttribute="bottom" constant="20" id="Rgg-Rs-JLj"/>
+                            <constraint firstItem="iPQ-1s-dVe" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="ymv-vF-Knb" secondAttribute="trailing" symbolic="YES" id="SWM-NB-OTk"/>
+                            <constraint firstItem="KyE-qZ-CV6" firstAttribute="top" secondItem="ymv-vF-Knb" secondAttribute="bottom" constant="15" id="Ye8-iM-JOi"/>
                             <constraint firstItem="ZJ9-tG-754" firstAttribute="leading" secondItem="gN0-HR-1zb" secondAttribute="trailing" constant="80" id="gpf-XF-A4H"/>
-                            <constraint firstItem="ymv-vF-Knb" firstAttribute="leading" secondItem="iPQ-1s-dVe" secondAttribute="leading" constant="20" id="qUp-VL-tZN"/>
+                            <constraint firstItem="Djk-B6-cOI" firstAttribute="leading" secondItem="iPQ-1s-dVe" secondAttribute="leading" constant="20" id="i03-ub-Avy"/>
+                            <constraint firstItem="gB0-Se-3vY" firstAttribute="leading" secondItem="Djk-B6-cOI" secondAttribute="trailing" constant="109" id="lTG-qJ-3r0"/>
+                            <constraint firstItem="ymv-vF-Knb" firstAttribute="leading" secondItem="iPQ-1s-dVe" secondAttribute="leading" constant="20" id="sFx-0z-DOy"/>
+                            <constraint firstItem="ymv-vF-Knb" firstAttribute="top" secondItem="Djk-B6-cOI" secondAttribute="bottom" constant="30" id="ssh-0W-CNi"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Settings" id="EWE-4u-3fv"/>
                     <connections>
                         <outlet property="detectionModeSegment" destination="KyE-qZ-CV6" id="iM1-Un-F95"/>
+                        <outlet property="frontCameraSwitch" destination="gB0-Se-3vY" id="kpf-AX-9FQ"/>
                         <outlet property="rightHandSwitch" destination="ZJ9-tG-754" id="EVY-1Q-x4W"/>
                     </connections>
                 </viewController>
@@ -252,9 +272,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="clock.circle.fill" catalog="system" width="128" height="123"/>
-        <image name="gear.circle.fill" catalog="system" width="128" height="123"/>
-        <image name="house.circle.fill" catalog="system" width="128" height="123"/>
+        <image name="clock.circle.fill" catalog="system" width="32" height="32"/>
+        <image name="gear.circle.fill" catalog="system" width="32" height="32"/>
+        <image name="house.circle.fill" catalog="system" width="32" height="32"/>
         <systemColor name="separatorColor">
             <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

@@ -32,6 +32,6 @@ protocol DatabaseProtocol: AnyObject {
     func addEntry(content: String) -> Entry
     func deleteEntry(entry: Entry)
     
-    func updateSettings(mode: Int32, rightHand: Bool)
+    func updateSettings(mode: Int32, rightHand: Bool, frontCamera: Bool)
     func fetchSettings() -> Settings?
 }

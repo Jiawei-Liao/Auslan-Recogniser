@@ -32,7 +32,7 @@ class CoreDataController: NSObject, DatabaseProtocol, NSFetchedResultsController
     
     // MARK: - Settings methods
     
-    func updateSettings(mode: Int32, rightHand: Bool) {
+    func updateSettings(mode: Int32, rightHand: Bool, frontCamera: Bool) {
         let fetchRequest: NSFetchRequest<Settings> = Settings.fetchRequest()
             
         do {
@@ -41,10 +41,12 @@ class CoreDataController: NSObject, DatabaseProtocol, NSFetchedResultsController
             if let setting = settings.first {
                 setting.mode = mode
                 setting.rightHand = rightHand
+                setting.frontCamera = frontCamera
             } else {
                 let newSetting = Settings(context: persistentContainer.viewContext)
                 newSetting.mode = mode
                 newSetting.rightHand = rightHand
+                newSetting.frontCamera = frontCamera
             }
                 
             cleanup()
