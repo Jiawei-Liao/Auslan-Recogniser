@@ -8,76 +8,10 @@
 import UIKit
 import AVFoundation
 import Vision
+import CoreML
+import TensorFlowLite
 
 class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
-    
-    // MARK: - HAND ONE
-    // Thumb
-    var thumbTipHandOne: CGPoint?
-    var thumbIpHandOne: CGPoint?
-    var thumbMpHandOne: CGPoint?
-    var thumbCmcHandOne: CGPoint?
-    
-    // Index
-    var indexTipHandOne: CGPoint?
-    var indexDipHandOne: CGPoint?
-    var indexPipHandOne: CGPoint?
-    var indexMcpHandOne: CGPoint?
-    
-    // Middle
-    var middleTipHandOne: CGPoint?
-    var middleDipHandOne: CGPoint?
-    var middlePipHandOne: CGPoint?
-    var middleMcpHandOne: CGPoint?
-    
-    // Ring
-    var ringTipHandOne: CGPoint?
-    var ringDipHandOne: CGPoint?
-    var ringPipHandOne: CGPoint?
-    var ringMcpHandOne: CGPoint?
-    
-    //Little
-    var littleTipHandOne: CGPoint?
-    var littleDipHandOne: CGPoint?
-    var littlePipHandOne: CGPoint?
-    var littleMcpHandOne: CGPoint?
-    
-    // Wrist
-    var wristHandOne: CGPoint?
-    
-    // MARK: - HAND TWO
-    // Thumb
-    var thumbTipHandTwo: CGPoint?
-    var thumbIpHandTwo: CGPoint?
-    var thumbMpHandTwo: CGPoint?
-    var thumbCmcHandTwo: CGPoint?
-
-    // Index
-    var indexTipHandTwo: CGPoint?
-    var indexDipHandTwo: CGPoint?
-    var indexPipHandTwo: CGPoint?
-    var indexMcpHandTwo: CGPoint?
-
-    // Middle
-    var middleTipHandTwo: CGPoint?
-    var middleDipHandTwo: CGPoint?
-    var middlePipHandTwo: CGPoint?
-    var middleMcpHandTwo: CGPoint?
-
-    // Ring
-    var ringTipHandTwo: CGPoint?
-    var ringDipHandTwo: CGPoint?
-    var ringPipHandTwo: CGPoint?
-    var ringMcpHandTwo: CGPoint?
-
-    //Little
-    var littleTipHandTwo: CGPoint?
-    var littleDipHandTwo: CGPoint?
-    var littlePipHandTwo: CGPoint?
-    var littleMcpHandTwo: CGPoint?
-
-    // Wrist
-    var wristHandTwo: CGPoint?
     
     // MARK: - Other variables / IBActions
     
@@ -157,193 +91,131 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
     
     // MARK: - Capture
     
+    // Helper function to extract points
+    func extractPoints(from observation: VNHumanHandPoseObservation, forHand hand: inout [VNRecognizedPointKey: CGPoint], confidenceThreshold: Float) -> Bool {
+        do {
+            let thumbPoints = try observation.recognizedPoints(forGroupKey: VNHumanHandPoseObservation.JointsGroupName.thumb.rawValue)
+            let indexFingerPoints = try observation.recognizedPoints(forGroupKey: VNHumanHandPoseObservation.JointsGroupName.indexFinger.rawValue)
+            let middleFingerPoints = try observation.recognizedPoints(forGroupKey: VNHumanHandPoseObservation.JointsGroupName.middleFinger.rawValue)
+            let ringFingerPoints = try observation.recognizedPoints(forGroupKey: VNHumanHandPoseObservation.JointsGroupName.ringFinger.rawValue)
+            let littleFingerPoints = try observation.recognizedPoints(forGroupKey: VNHumanHandPoseObservation.JointsGroupName.littleFinger.rawValue)
+            let wristPoint = try observation.recognizedPoint(VNHumanHandPoseObservation.JointName.wrist)
+            
+            guard let thumbTipPoint = thumbPoints[VNRecognizedPointKey(rawValue: "VNHLKTTIP")],
+                  let thumbIpPoint = thumbPoints[VNRecognizedPointKey(rawValue: "VNHLKTIP")],
+                  let thumbMpPoint = thumbPoints[VNRecognizedPointKey(rawValue: "VNHLKTMP")],
+                  let thumbCmcPoint = thumbPoints[VNRecognizedPointKey(rawValue: "VNHLKTCMC")],
+                  let indexTipPoint = indexFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKITIP")],
+                  let indexDipPoint = indexFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKIDIP")],
+                  let indexPipPoint = indexFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKIPIP")],
+                  let indexMcpPoint = indexFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKIMCP")],
+                  let middleTipPoint = middleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKMTIP")],
+                  let middleDipPoint = middleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKMDIP")],
+                  let middlePipPoint = middleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKMPIP")],
+                  let middleMcpPoint = middleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKMMCP")],
+                  let ringTipPoint = ringFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKRTIP")],
+                  let ringDipPoint = ringFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKRDIP")],
+                  let ringPipPoint = ringFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKRPIP")],
+                  let ringMcpPoint = ringFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKRMCP")],
+                  let littleTipPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPTIP")],
+                  let littleDipPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPDIP")],
+                  let littlePipPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPPIP")],
+                  let littleMcpPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPMCP")]
+                else {
+                    cameraViewClass.showPoints([])
+                    print("Failed point extraction")
+                    return false
+                }
+            
+            let pointKeys = [
+                thumbTipPoint, thumbIpPoint, thumbMpPoint, thumbCmcPoint,
+                indexTipPoint, indexDipPoint, indexPipPoint, indexMcpPoint,
+                middleTipPoint, middleDipPoint, middlePipPoint, middleMcpPoint,
+                ringTipPoint, ringDipPoint, ringPipPoint, ringMcpPoint,
+                littleTipPoint, littleDipPoint, littlePipPoint, littleMcpPoint
+            ]
+
+            for point in pointKeys {
+                if point.confidence > confidenceThreshold {
+                    hand[point.identifier] = CGPoint(x: point.location.x, y: 1 - point.location.y)
+                } else {
+                    return false
+                }
+            }
+
+            if wristPoint.confidence > confidenceThreshold {
+                hand[VNRecognizedPointKey(rawValue: "wrist")] = CGPoint(x: wristPoint.location.x, y: 1 - wristPoint.location.y)
+            } else {
+                return false
+            }
+
+            return true
+            
+        } catch {
+            print("Error extracting points: \(error)")
+            return false
+        }
+    }
+
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        
         let handler = VNImageRequestHandler(cmSampleBuffer: sampleBuffer, orientation: .up, options: [:])
         do {
             try handler.perform([handPoseRequest])
             
-            guard let observations = handPoseRequest.results, observations.count == 2 else {
-                cameraViewClass.showPoints([])
+            guard let observations = handPoseRequest.results, observations.count > 1 else {
+                DispatchQueue.main.async {
+                    //self.cameraViewClass.showPoints([])
+                }
                 return
             }
-            
-            var iterationOne = true
-            
-            for observation in observations {
-                let thumbPoints = try observation.recognizedPoints(forGroupKey: VNHumanHandPoseObservation.JointsGroupName.thumb.rawValue)
-                let indexFingerPoints = try observation.recognizedPoints(forGroupKey: VNHumanHandPoseObservation.JointsGroupName.indexFinger.rawValue)
-                let middleFingerPoints = try observation.recognizedPoints(forGroupKey: VNHumanHandPoseObservation.JointsGroupName.middleFinger.rawValue)
-                let ringFingerPoints = try observation.recognizedPoints(forGroupKey: VNHumanHandPoseObservation.JointsGroupName.ringFinger.rawValue)
-                let littleFingerPoints = try observation.recognizedPoints(forGroupKey: VNHumanHandPoseObservation.JointsGroupName.littleFinger.rawValue)
-                let wristPoint = try observation.recognizedPoint(VNHumanHandPoseObservation.JointName.wrist)
-                
-                if iterationOne {
-                    guard let thumbTipPoint = thumbPoints[VNRecognizedPointKey(rawValue: "VNHLKTTIP")],
-                          let thumbIpPoint = thumbPoints[VNRecognizedPointKey(rawValue: "VNHLKTIP")],
-                          let thumbMpPoint = thumbPoints[VNRecognizedPointKey(rawValue: "VNHLKTMP")],
-                          let thumbCmcPoint = thumbPoints[VNRecognizedPointKey(rawValue: "VNHLKTCMC")],
-                          let indexTipPoint = indexFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKITIP")],
-                          let indexDipPoint = indexFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKIDIP")],
-                          let indexPipPoint = indexFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKIPIP")],
-                          let indexMcpPoint = indexFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKIMCP")],
-                          let middleTipPoint = middleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKMTIP")],
-                          let middleDipPoint = middleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKMDIP")],
-                          let middlePipPoint = middleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKMPIP")],
-                          let middleMcpPoint = middleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKMMCP")],
-                          let ringTipPoint = ringFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKRTIP")],
-                          let ringDipPoint = ringFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKRDIP")],
-                          let ringPipPoint = ringFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKRPIP")],
-                          let ringMcpPoint = ringFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKRMCP")],
-                          let littleTipPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPTIP")],
-                          let littleDipPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPDIP")],
-                          let littlePipPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPPIP")],
-                          let littleMcpPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPMCP")]
-                    else {
-                        cameraViewClass.showPoints([])
-                        print("Failed point extraction")
-                        return
-                    }
-                    
-                    let confidenceThreshold: Float = 0.3
-                    guard thumbTipPoint.confidence > confidenceThreshold &&
-                            thumbIpPoint.confidence > confidenceThreshold &&
-                            thumbMpPoint.confidence > confidenceThreshold &&
-                            thumbCmcPoint.confidence > confidenceThreshold &&
-                            indexTipPoint.confidence > confidenceThreshold &&
-                            indexDipPoint.confidence > confidenceThreshold &&
-                            indexPipPoint.confidence > confidenceThreshold &&
-                            indexMcpPoint.confidence > confidenceThreshold &&
-                            middleTipPoint.confidence > confidenceThreshold &&
-                            middleDipPoint.confidence > confidenceThreshold &&
-                            middlePipPoint.confidence > confidenceThreshold &&
-                            middleMcpPoint.confidence > confidenceThreshold &&
-                            ringTipPoint.confidence > confidenceThreshold &&
-                            ringDipPoint.confidence > confidenceThreshold &&
-                            ringPipPoint.confidence > confidenceThreshold &&
-                            ringMcpPoint.confidence > confidenceThreshold &&
-                            littleTipPoint.confidence > confidenceThreshold &&
-                            littleDipPoint.confidence > confidenceThreshold &&
-                            littlePipPoint.confidence > confidenceThreshold &&
-                            littleMcpPoint.confidence > confidenceThreshold &&
-                            wristPoint.confidence > confidenceThreshold
-                    else {
-                        cameraViewClass.showPoints([])
-                        print("Failed confidence test")
-                        return
-                    }
-                    
-                    thumbTipHandOne = CGPoint(x: thumbTipPoint.location.x, y: 1 - thumbTipPoint.location.y)
-                    thumbIpHandOne = CGPoint(x: thumbIpPoint.location.x, y: 1 - thumbIpPoint.location.y)
-                    thumbMpHandOne = CGPoint(x: thumbMpPoint.location.x, y: 1 - thumbMpPoint.location.y)
-                    thumbCmcHandOne = CGPoint(x: thumbCmcPoint.location.x, y: 1 - thumbCmcPoint.location.y)
-                    indexTipHandOne = CGPoint(x: indexTipPoint.location.x, y: 1 - indexTipPoint.location.y)
-                    indexDipHandOne = CGPoint(x: indexDipPoint.location.x, y: 1 - indexDipPoint.location.y)
-                    indexPipHandOne = CGPoint(x: indexPipPoint.location.x, y: 1 - indexPipPoint.location.y)
-                    indexMcpHandOne = CGPoint(x: indexMcpPoint.location.x, y: 1 - indexMcpPoint.location.y)
-                    middleTipHandOne = CGPoint(x: middleTipPoint.location.x, y: 1 - middleTipPoint.location.y)
-                    middleDipHandOne = CGPoint(x: middleDipPoint.location.x, y: 1 - middleDipPoint.location.y)
-                    middlePipHandOne = CGPoint(x: middlePipPoint.location.x, y: 1 - middlePipPoint.location.y)
-                    middleMcpHandOne = CGPoint(x: middleMcpPoint.location.x, y: 1 - middleMcpPoint.location.y)
-                    ringTipHandOne = CGPoint(x: ringTipPoint.location.x, y: 1 - ringTipPoint.location.y)
-                    ringDipHandOne = CGPoint(x: ringDipPoint.location.x, y: 1 - ringDipPoint.location.y)
-                    ringPipHandOne = CGPoint(x: ringPipPoint.location.x, y: 1 - ringPipPoint.location.y)
-                    ringMcpHandOne = CGPoint(x: ringMcpPoint.location.x, y: 1 - ringMcpPoint.location.y)
-                    littleTipHandOne = CGPoint(x: littleTipPoint.location.x, y: 1 - littleTipPoint.location.y)
-                    littleDipHandOne = CGPoint(x: littleDipPoint.location.x, y: 1 - littleDipPoint.location.y)
-                    littlePipHandOne = CGPoint(x: littlePipPoint.location.x, y: 1 - littlePipPoint.location.y)
-                    littleMcpHandOne = CGPoint(x: littleMcpPoint.location.x, y: 1 - littleMcpPoint.location.y)
-                    wristHandOne = CGPoint(x: wristPoint.location.x, y: 1 - wristPoint.location.y)
-                    
-                    DispatchQueue.main.async {
-                        self.convertPoints([self.thumbTipHandOne, self.thumbIpHandOne, self.thumbMpHandOne, self.thumbCmcHandOne, self.indexTipHandOne, self.indexDipHandOne, self.indexPipHandOne, self.indexMcpHandOne, self.middleTipHandOne, self.middleDipHandOne, self.middlePipHandOne, self.middleMcpHandOne, self.ringTipHandOne, self.ringDipHandOne, self.ringPipHandOne, self.ringMcpHandOne, self.littleTipHandOne, self.littleDipHandOne, self.littlePipHandOne, self.littleMcpHandOne, self.wristHandOne])
-                    }
 
-                    iterationOne = false
-                    
-                } else {
-                    guard let thumbTipPoint = thumbPoints[VNRecognizedPointKey(rawValue: "VNHLKTTIP")],
-                          let thumbIpPoint = thumbPoints[VNRecognizedPointKey(rawValue: "VNHLKTIP")],
-                          let thumbMpPoint = thumbPoints[VNRecognizedPointKey(rawValue: "VNHLKTMP")],
-                          let thumbCmcPoint = thumbPoints[VNRecognizedPointKey(rawValue: "VNHLKTCMC")],
-                          let indexTipPoint = indexFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKITIP")],
-                          let indexDipPoint = indexFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKIDIP")],
-                          let indexPipPoint = indexFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKIPIP")],
-                          let indexMcpPoint = indexFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKIMCP")],
-                          let middleTipPoint = middleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKMTIP")],
-                          let middleDipPoint = middleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKMDIP")],
-                          let middlePipPoint = middleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKMPIP")],
-                          let middleMcpPoint = middleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKMMCP")],
-                          let ringTipPoint = ringFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKRTIP")],
-                          let ringDipPoint = ringFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKRDIP")],
-                          let ringPipPoint = ringFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKRPIP")],
-                          let ringMcpPoint = ringFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKRMCP")],
-                          let littleTipPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPTIP")],
-                          let littleDipPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPDIP")],
-                          let littlePipPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPPIP")],
-                          let littleMcpPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPMCP")]
-                    else {
-                        cameraViewClass.showPoints([])
-                        print("Failed point extraction")
-                        return
-                    }
-                    
-                    let confidenceThreshold: Float = 0.3
-                    guard thumbTipPoint.confidence > confidenceThreshold &&
-                            thumbIpPoint.confidence > confidenceThreshold &&
-                            thumbMpPoint.confidence > confidenceThreshold &&
-                            thumbCmcPoint.confidence > confidenceThreshold &&
-                            indexTipPoint.confidence > confidenceThreshold &&
-                            indexDipPoint.confidence > confidenceThreshold &&
-                            indexPipPoint.confidence > confidenceThreshold &&
-                            indexMcpPoint.confidence > confidenceThreshold &&
-                            middleTipPoint.confidence > confidenceThreshold &&
-                            middleDipPoint.confidence > confidenceThreshold &&
-                            middlePipPoint.confidence > confidenceThreshold &&
-                            middleMcpPoint.confidence > confidenceThreshold &&
-                            ringTipPoint.confidence > confidenceThreshold &&
-                            ringDipPoint.confidence > confidenceThreshold &&
-                            ringPipPoint.confidence > confidenceThreshold &&
-                            ringMcpPoint.confidence > confidenceThreshold &&
-                            littleTipPoint.confidence > confidenceThreshold &&
-                            littleDipPoint.confidence > confidenceThreshold &&
-                            littlePipPoint.confidence > confidenceThreshold &&
-                            littleMcpPoint.confidence > confidenceThreshold &&
-                            wristPoint.confidence > confidenceThreshold
-                    else {
-                        cameraViewClass.showPoints([])
-                        print("Failed confidence test")
-                        return
-                    }
-                    
-                    thumbTipHandTwo = CGPoint(x: thumbTipPoint.location.x, y: 1 - thumbTipPoint.location.y)
-                    thumbIpHandTwo = CGPoint(x: thumbIpPoint.location.x, y: 1 - thumbIpPoint.location.y)
-                    thumbMpHandTwo = CGPoint(x: thumbMpPoint.location.x, y: 1 - thumbMpPoint.location.y)
-                    thumbCmcHandTwo = CGPoint(x: thumbCmcPoint.location.x, y: 1 - thumbCmcPoint.location.y)
-                    indexTipHandTwo = CGPoint(x: indexTipPoint.location.x, y: 1 - indexTipPoint.location.y)
-                    indexDipHandTwo = CGPoint(x: indexDipPoint.location.x, y: 1 - indexDipPoint.location.y)
-                    indexPipHandTwo = CGPoint(x: indexPipPoint.location.x, y: 1 - indexPipPoint.location.y)
-                    indexMcpHandTwo = CGPoint(x: indexMcpPoint.location.x, y: 1 - indexMcpPoint.location.y)
-                    middleTipHandTwo = CGPoint(x: middleTipPoint.location.x, y: 1 - middleTipPoint.location.y)
-                    middleDipHandTwo = CGPoint(x: middleDipPoint.location.x, y: 1 - middleDipPoint.location.y)
-                    middlePipHandTwo = CGPoint(x: middlePipPoint.location.x, y: 1 - middlePipPoint.location.y)
-                    middleMcpHandTwo = CGPoint(x: middleMcpPoint.location.x, y: 1 - middleMcpPoint.location.y)
-                    ringTipHandTwo = CGPoint(x: ringTipPoint.location.x, y: 1 - ringTipPoint.location.y)
-                    ringDipHandTwo = CGPoint(x: ringDipPoint.location.x, y: 1 - ringDipPoint.location.y)
-                    ringPipHandTwo = CGPoint(x: ringPipPoint.location.x, y: 1 - ringPipPoint.location.y)
-                    ringMcpHandTwo = CGPoint(x: ringMcpPoint.location.x, y: 1 - ringMcpPoint.location.y)
-                    littleTipHandTwo = CGPoint(x: littleTipPoint.location.x, y: 1 - littleTipPoint.location.y)
-                    littleDipHandTwo = CGPoint(x: littleDipPoint.location.x, y: 1 - littleDipPoint.location.y)
-                    littlePipHandTwo = CGPoint(x: littlePipPoint.location.x, y: 1 - littlePipPoint.location.y)
-                    littleMcpHandTwo = CGPoint(x: littleMcpPoint.location.x, y: 1 - littleMcpPoint.location.y)
-                    wristHandTwo = CGPoint(x: wristPoint.location.x, y: 1 - wristPoint.location.y)
+            var handOne: [VNRecognizedPointKey: CGPoint] = [:]
+            var handTwo: [VNRecognizedPointKey: CGPoint] = [:]
+
+            let confidenceThreshold: Float = 0.3
+
+            let handOneSuccess = extractPoints(from: observations[0], forHand: &handOne, confidenceThreshold: confidenceThreshold)
+            
+            var handTwoSuccess = false
+
+            if observations.count > 1 {
+                handTwoSuccess = extractPoints(from: observations[1], forHand: &handTwo, confidenceThreshold: confidenceThreshold)
+            }
+
+            if !handOneSuccess || (observations.count > 1 && !handTwoSuccess) {
+                DispatchQueue.main.async {
+                    self.cameraViewClass.showPoints([])
+                }
+                print("Failed point extraction or confidence test")
+                return
+            }
+
+            if observations.count == 2 {
+                if let handOneWrist = handOne[VNRecognizedPointKey(rawValue: "wrist")],
+                   let handTwoWrist = handTwo[VNRecognizedPointKey(rawValue: "wrist")] {
+
+                    let handOneIsLeftHand = handOneWrist.x < handTwoWrist.x
+
+                    let pointsLeftHand = handOneIsLeftHand ? handOne.values : handTwo.values
+                    let pointsRightHand = handOneIsLeftHand ? handTwo.values : handOne.values
 
                     DispatchQueue.main.async {
-                        self.convertPoints([self.thumbTipHandTwo, self.thumbIpHandTwo, self.thumbMpHandTwo, self.thumbCmcHandTwo, self.indexTipHandTwo, self.indexDipHandTwo, self.indexPipHandTwo, self.indexMcpHandTwo, self.middleTipHandTwo, self.middleDipHandTwo, self.middlePipHandTwo, self.middleMcpHandTwo, self.ringTipHandTwo, self.ringDipHandTwo, self.ringPipHandTwo, self.ringMcpHandTwo, self.littleTipHandTwo, self.littleDipHandTwo, self.littlePipHandTwo, self.littleMcpHandTwo, self.wristHandTwo])
+                        let pointsLeftHandConverted = pointsLeftHand.map { self.cameraViewClass.previewLayer.layerPointConverted(fromCaptureDevicePoint: $0)
+                        }
+                        
+                        let pointsRightHandConverted = pointsRightHand.map { self.cameraViewClass.previewLayer.layerPointConverted(fromCaptureDevicePoint: $0)
+                        }
+                        
+                        print("Left hand points: \(pointsLeftHandConverted)")
+                        print("Right hand points: \(pointsRightHandConverted)")
+                        
+                        //self.cameraViewClass.showPoints(pointsLeftHandConverted)
+                        //self.cameraViewClass.showPoints(pointsRightHandConverted)
+                        print(observations)
+                        self.commentsContainerView.text = (self.videoAttempt(videoFrames: observations))
                     }
                 }
             }
-            
         } catch {
             captureSession.stopRunning()
             DispatchQueue.main.async {
@@ -365,14 +237,134 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
         view.endEditing(true)
     }
     
-    func convertPoints(_ points: [CGPoint?]) {
-        var pointsDiscovered: [CGPoint] = []
-        
-        for point in points {
-            pointsDiscovered.append(cameraViewClass.previewLayer.layerPointConverted(fromCaptureDevicePoint: point!))
+    // MARK: - Translation Functions
+
+    // Function to read JSON files from the main bundle
+    func loadJSON<T: Decodable>(filename: String, as type: T.Type) -> T? {
+        guard let url = Bundle.main.url(forResource: filename, withExtension: "json") else {
+            print("Failed to locate \(filename) in bundle.")
+            return nil
         }
         
-        cameraViewClass.showPoints(pointsDiscovered)
-        print("Showing points now....")
+        do {
+            let data = try Data(contentsOf: url)
+            let decodedData = try JSONDecoder().decode(T.self, from: data)
+            return decodedData
+        } catch {
+            print("Failed to decode \(filename): \(error)")
+            return nil
+        }
+    }
+
+    // Modify the videoAttempt function
+    func videoAttempt(videoFrames: [VNRecognizedPointsObservation]) -> String? {
+        // Load JSON data
+        guard let inferenceArgs: InferenceArgs = loadJSON(filename: "inference_args", as: InferenceArgs.self),
+              let characterMap: CharacterMap = loadJSON(filename: "character_to_prediction_index", as: CharacterMap.self) else {
+            return nil
+        }
+
+        let selectedColumns = inferenceArgs.selected_columns
+        let characterMapping = characterMap.map
+
+        var dataFrame: [[Float32]] = []
+
+        // Process each frame in the video
+        for frame in videoFrames {
+            var row: [Float32] = []
+            if let recognizedPoints = try? frame.recognizedPoints(forGroupKey: .all) {
+                for column in selectedColumns {
+                    if let point = recognizedPoints[VNRecognizedPointKey(rawValue: column)] {
+                        row.append(Float32(point.location.x))
+                        row.append(Float32(point.location.y))
+                    } else {
+                        // Append a default value if the joint is not available
+                        row.append(contentsOf: [Float32](repeating: 0.0, count: 2))
+                    }
+                }
+            }
+            dataFrame.append(row)
+        }
+
+        // Load the TFLite model
+        guard let modelPath = Bundle.main.path(forResource: "model", ofType: "tflite") else {
+            print("Failed to load the model file.")
+            return nil
+        }
+        
+        var options = Interpreter.Options()
+        options.threadCount = 4
+        let interpreter: Interpreter
+        do {
+            interpreter = try Interpreter(modelPath: modelPath, options: options)
+            try interpreter.allocateTensors()
+            
+            print(try interpreter.input(at: 0).shape)
+        } catch {
+            print("Error creating TensorFlow Lite interpreter: \(error)")
+            return nil
+        }
+        
+        // Prepare the input tensor
+        let flattenedData = dataFrame.flatMap { $0 }
+        let inputData = Data(copyingBufferOf: flattenedData)
+
+        do {
+            try interpreter.copy(inputData, toInputAt: 0)
+            try interpreter.invoke()
+            
+            let outputTensor = try interpreter.output(at: 0)
+            let outputArray = [Float32](unsafeData: outputTensor.data) ?? []
+            
+            // Map the output to characters
+            let predictionIndices = outputArray.map { Int($0) }
+            
+            // Create a reversed mapping from index to character
+            let reversedCharacterMapping = Dictionary(uniqueKeysWithValues: characterMapping.map { ($0.value, $0.key) })
+
+            // Convert prediction indices to characters using the reversed mapping
+            let predictionString = predictionIndices.compactMap { reversedCharacterMapping[$0] }.joined()
+
+            
+            return predictionString
+        } catch {
+            print("Error running the model: \(error)")
+            return nil
+        }
+    }
+    
+    // Define the structures for the JSON files
+    struct InferenceArgs: Codable {
+        let selected_columns: [String]
+    }
+
+    struct CharacterMap: Codable {
+        let map: [String: Int]
+    }
+}
+
+// MARK: - Extensions
+
+extension Data {
+    init<T>(copyingBufferOf array: [T]) {
+        self = array.withUnsafeBufferPointer { buffer in
+            Data(buffer: buffer)
+        }
+    }
+}
+
+// Extension to convert Data to array
+extension Array where Element: Numeric {
+    init?(unsafeData: Data) {
+        let elementSize = MemoryLayout<Element>.stride
+        let count = unsafeData.count / elementSize
+        guard unsafeData.count == count * elementSize else { return nil }
+        
+        self = unsafeData.withUnsafeBytes { buffer in
+            Array<Element>(unsafeUninitializedCapacity: count) { pointer, initializedCount in
+                buffer.copyBytes(to: pointer)
+                initializedCount = count
+            }
+        }
     }
 }

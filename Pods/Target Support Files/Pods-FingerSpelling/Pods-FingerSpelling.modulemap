@@ -1,0 +1,6 @@
+framework module Pods_FingerSpelling {
+  umbrella header "Pods-FingerSpelling-umbrella.h"
+
+  export *
+  module * { export * }
+}

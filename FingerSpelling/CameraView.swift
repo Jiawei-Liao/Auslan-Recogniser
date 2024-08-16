@@ -50,12 +50,13 @@ class CameraView: UIView {
     }
     
     func showPoints(_ points: [CGPoint]) {
-        guard let wrist: CGPoint = points.last else {
-            // Clear all CALayers
-            clearLayers()
+        clearLayers()
+        
+        guard points.count >= 21 else {
             return
         }
-        
+
+        let wrist: CGPoint = points.last!
         let thumbColor = UIColor.green
         let indexColor = UIColor.blue
         let middleColor = UIColor.yellow
