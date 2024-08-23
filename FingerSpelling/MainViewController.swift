@@ -28,6 +28,8 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
     
     weak var databaseController: DatabaseProtocol?
     
+    var totalFrames: [[Float32]] = []
+    
     @IBAction func clearEntry(_ sender: Any) {
         commentsContainerView.text = ""
     }
@@ -122,7 +124,7 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
                   let littlePipPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPPIP")],
                   let littleMcpPoint = littleFingerPoints[VNRecognizedPointKey(rawValue: "VNHLKPMCP")]
                 else {
-                    cameraViewClass.showPoints([])
+                    //cameraViewClass.showPoints([])
                     print("Failed point extraction")
                     return false
                 }
@@ -211,8 +213,16 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
                         
                         //self.cameraViewClass.showPoints(pointsLeftHandConverted)
                         //self.cameraViewClass.showPoints(pointsRightHandConverted)
-                        print(observations)
-                        self.commentsContainerView.text = (self.videoAttempt(videoFrames: observations))
+                        
+                        if self.totalFrames.count < 4 {
+                            let leftHandArray = self.convertToFloat32Array(points: pointsLeftHandConverted)
+                            let rightHandArray = self.convertToFloat32Array(points: pointsRightHandConverted)
+                            
+                            self.totalFrames.append(leftHandArray + rightHandArray)
+                        } else {
+                            self.commentsContainerView.text = self.videoAttempt(videoFrames: self.totalFrames)
+                            self.totalFrames = []
+                        }
                     }
                 }
             }
@@ -257,7 +267,7 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
     }
 
     // Modify the videoAttempt function
-    func videoAttempt(videoFrames: [VNRecognizedPointsObservation]) -> String? {
+    func videoAttempt(videoFrames: [[Float32]]) -> String? {
         // Load JSON data
         guard let inferenceArgs: InferenceArgs = loadJSON(filename: "inference_args", as: InferenceArgs.self),
               let characterMap: CharacterMap = loadJSON(filename: "character_to_prediction_index", as: CharacterMap.self) else {
@@ -268,23 +278,38 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
         let characterMapping = characterMap.map
 
         var dataFrame: [[Float32]] = []
+        
+        let faceArr = Array(repeating: Float32(0.0), count: 468)
+        let poseArr = Array(repeating: Float32(0.0), count: 33)
+        let handArr = Array(repeating: Float32(0.0), count: 21)
 
         // Process each frame in the video
         for frame in videoFrames {
             var row: [Float32] = []
-            if let recognizedPoints = try? frame.recognizedPoints(forGroupKey: .all) {
-                for column in selectedColumns {
-                    if let point = recognizedPoints[VNRecognizedPointKey(rawValue: column)] {
-                        row.append(Float32(point.location.x))
-                        row.append(Float32(point.location.y))
-                    } else {
-                        // Append a default value if the joint is not available
-                        row.append(contentsOf: [Float32](repeating: 0.0, count: 2))
-                    }
-                }
-            }
+            
+            row.append(contentsOf: faceArr)
+            row.append(contentsOf: frame[0..<21])
+            row.append(contentsOf: poseArr)
+            row.append(contentsOf: frame[21..<42])
+            row.append(contentsOf: faceArr)
+            row.append(contentsOf: frame[0..<21])
+            row.append(contentsOf: poseArr)
+            row.append(contentsOf: frame[21..<42])
+            row.append(contentsOf: faceArr)
+            row.append(contentsOf: handArr)
+            row.append(contentsOf: poseArr)
+            row.append(contentsOf: handArr)
+            
             dataFrame.append(row)
         }
+        
+        guard let firstFrame = dataFrame.first, firstFrame.count == 1629 else {
+            print("Error: No frame with the expected size of 1629.")
+            return nil
+        }
+        
+        let finalData: [Float32]
+        finalData = firstFrame
 
         // Load the TFLite model
         guard let modelPath = Bundle.main.path(forResource: "model", ofType: "tflite") else {
@@ -306,7 +331,7 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
         }
         
         // Prepare the input tensor
-        let flattenedData = dataFrame.flatMap { $0 }
+        let flattenedData = finalData.compactMap { $0 }
         let inputData = Data(copyingBufferOf: flattenedData)
 
         do {
@@ -340,6 +365,10 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
 
     struct CharacterMap: Codable {
         let map: [String: Int]
+    }
+    
+    func convertToFloat32Array(points: [CGPoint]) -> [Float32] {
+        return points.flatMap { [Float32($0.x), Float32($0.y)] }
     }
 }
 
