@@ -29,6 +29,7 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
     weak var databaseController: DatabaseProtocol?
     
     var totalFrames: [[Float32]] = []
+    let maxFrames = 16
     
     @IBAction func clearEntry(_ sender: Any) {
         commentsContainerView.text = ""
@@ -186,7 +187,7 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
 
             if !handOneSuccess || (observations.count > 1 && !handTwoSuccess) {
                 DispatchQueue.main.async {
-                    self.cameraViewClass.showPoints([])
+                    //self.cameraViewClass.showPoints([])
                 }
                 print("Failed point extraction or confidence test")
                 return
@@ -214,7 +215,7 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
                         //self.cameraViewClass.showPoints(pointsLeftHandConverted)
                         //self.cameraViewClass.showPoints(pointsRightHandConverted)
                         
-                        if self.totalFrames.count < 4 {
+                        if self.totalFrames.count < self.maxFrames {
                             let leftHandArray = self.convertToFloat32Array(points: pointsLeftHandConverted)
                             let rightHandArray = self.convertToFloat32Array(points: pointsRightHandConverted)
                             
@@ -282,19 +283,31 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
         let faceArr = Array(repeating: Float32(0.0), count: 468)
         let poseArr = Array(repeating: Float32(0.0), count: 33)
         let handArr = Array(repeating: Float32(0.0), count: 21)
+        
+        func extractOddElements(from array: ArraySlice<Float32>) -> [Float32] {
+            return array.enumerated().compactMap { (index, element) in
+                return index % 2 == 1 ? element : nil
+            }
+        }
+
+        func extractEvenElements(from array: ArraySlice<Float32>) -> [Float32] {
+            return array.enumerated().compactMap { (index, element) in
+                return index % 2 == 0 ? element : nil
+            }
+        }
 
         // Process each frame in the video
         for frame in videoFrames {
             var row: [Float32] = []
             
             row.append(contentsOf: faceArr)
-            row.append(contentsOf: frame[0..<21])
+            row.append(contentsOf: extractOddElements(from: frame[0..<42]))  // only odd indices from 0 to 42
             row.append(contentsOf: poseArr)
-            row.append(contentsOf: frame[21..<42])
+            row.append(contentsOf: extractEvenElements(from: frame[0..<42])) // only even indices from 0 to 42
             row.append(contentsOf: faceArr)
-            row.append(contentsOf: frame[0..<21])
+            row.append(contentsOf: extractOddElements(from: frame[42..<84])) // only odd indices from 42 to 85
             row.append(contentsOf: poseArr)
-            row.append(contentsOf: frame[21..<42])
+            row.append(contentsOf: extractEvenElements(from: frame[42..<84])) // only even indices from 42 to 85
             row.append(contentsOf: faceArr)
             row.append(contentsOf: handArr)
             row.append(contentsOf: poseArr)
@@ -302,16 +315,17 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
             
             dataFrame.append(row)
         }
-        
+
+        // Ensure that the size of each frame is correct
         guard let firstFrame = dataFrame.first, firstFrame.count == 1629 else {
             print("Error: No frame with the expected size of 1629.")
             return nil
         }
-        
-        let finalData: [Float32]
-        finalData = firstFrame
 
-        // Load the TFLite model
+        // Flatten all frames into a 1D array for TensorFlow Lite input
+        let flattenedData = dataFrame.flatMap { $0 }
+
+        // Load the TensorFlow Lite model
         guard let modelPath = Bundle.main.path(forResource: "model", ofType: "tflite") else {
             print("Failed to load the model file.")
             return nil
@@ -322,23 +336,31 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
         let interpreter: Interpreter
         do {
             interpreter = try Interpreter(modelPath: modelPath, options: options)
-            try interpreter.allocateTensors()
+            //try interpreter.allocateTensors()
+            let predictionFN = try interpreter.signatureRunner(with: "serving_default")
             
-            print(try interpreter.input(at: 0).shape)
+            let myTensor = Tensor(name: "myTensor", dataType: .float32, shape: Tensor.Shape([self.maxFrames, 1629]), data: Data(copyingBufferOf: dataFrame))
+            let output = try predictionFN.invoke(with: ["inputs": myTensor.data])
+            print(output)
         } catch {
             print("Error creating TensorFlow Lite interpreter: \(error)")
             return nil
         }
-        
-        // Prepare the input tensor
-        let flattenedData = finalData.compactMap { $0 }
+
+        // Prepare the input tensor (using all frames, not averaged)
         let inputData = Data(copyingBufferOf: flattenedData)
 
         do {
+            // Copy input data into the interpreter
             try interpreter.copy(inputData, toInputAt: 0)
+            
+            // Run inference
             try interpreter.invoke()
             
+            // Get the output tensor
             let outputTensor = try interpreter.output(at: 0)
+            
+            // Convert the output data to an array
             let outputArray = [Float32](unsafeData: outputTensor.data) ?? []
             
             // Map the output to characters
@@ -349,7 +371,6 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
 
             // Convert prediction indices to characters using the reversed mapping
             let predictionString = predictionIndices.compactMap { reversedCharacterMapping[$0] }.joined()
-
             
             return predictionString
         } catch {
@@ -357,6 +378,7 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
             return nil
         }
     }
+
     
     // Define the structures for the JSON files
     struct InferenceArgs: Codable {
@@ -371,6 +393,15 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
         return points.flatMap { [Float32($0.x), Float32($0.y)] }
     }
 }
+
+
+
+
+
+
+
+
+
 
 // MARK: - Extensions
 

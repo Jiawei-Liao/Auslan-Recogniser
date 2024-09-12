@@ -42,7 +42,7 @@ public struct Tensor: Equatable, Hashable {
   ///   - data: The data in the input `Tensor`.
   ///   - quantizationParameters Parameters for the `Tensor` if using a quantized model. The default
   ///       is `nil`.
-  init(
+  public init(
     name: String,
     dataType: DataType,
     shape: Shape,
