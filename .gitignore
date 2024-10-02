@@ -1,0 +1,4 @@
+/process_data/output_parquets
+/process_data/dataset
+*.parquet
+*.mp4
