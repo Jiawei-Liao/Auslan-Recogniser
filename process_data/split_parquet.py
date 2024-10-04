@@ -4,7 +4,6 @@
 import pandas as pd
 import os
 from typing import List
-current_file_directory = os.path.dirname(os.path.abspath(__file__))
 
 """ Update sequence_id to replace the first digit with the split number """
 def update_sequence_id(df: pd.DataFrame, split_num: int) -> pd.DataFrame:
@@ -15,7 +14,7 @@ def update_sequence_id(df: pd.DataFrame, split_num: int) -> pd.DataFrame:
 """ Split the parquet file into three groups based on frame number """
 def split_parquet_by_frame(session_num: int, num_groups: int = 3) -> None:
     # Load the parquet file based on the session number
-    input_file = os.path.join(current_file_directory, 'output_parquet/session_{session_num:02}.parquet')
+    input_file = './output_parquet/session_{session_num:02}.parquet'
     df = pd.read_parquet(input_file)
     
     # Split data into three groups based on frame number
@@ -28,7 +27,7 @@ def split_parquet_by_frame(session_num: int, num_groups: int = 3) -> None:
         grouped_dfs[i - 1] = update_sequence_id(group, i)
 
         # Define output filename
-        output_file = os.path.join(current_file_directory, 'landmarks/{i}{session_num:02}.parquet')
+        output_file = './landmarks/{i}{session_num:02}.parquet'
 
         # Save the group into a separate parquet file
         grouped_dfs[i - 1].to_parquet(output_file)
@@ -39,5 +38,6 @@ def main(sessions: List[int]) -> None:
         split_parquet_by_frame(session)
 
 if __name__ == '__main__':
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     sessions = list(range(1, 15))
     main(sessions)

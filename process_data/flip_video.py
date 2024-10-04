@@ -3,9 +3,9 @@
 import os
 from moviepy.editor import VideoFileClip, vfx
 
-current_file_directory = os.path.dirname(os.path.abspath(__file__))
-input_folder = os.path.join(current_file_directory, 'dataset/08')
-output_folder = os.path.join(current_file_directory, 'dataset/08_flipped')
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+input_folder = './dataset/08'
+output_folder = './dataset/08_flipped'
 
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
@@ -15,7 +15,6 @@ for filename in os.listdir(input_folder):
         input_path = os.path.join(input_folder, filename)
         output_path = os.path.join(output_folder, filename)
         
-
         video = VideoFileClip(input_path)
 
         flipped_video = video.fx(vfx.mirror_x)

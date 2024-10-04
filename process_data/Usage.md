@@ -4,4 +4,4 @@
 3. Run `split_parquet.py`
     a. This will create a folder called landmarks
 4. Run `combine_parquets.py`
-    a. This will create the final parquet `101.parquet`
+    a. This will create the multiple parquet files of `101.parquet`, `102.parquet` and `103.parquet`

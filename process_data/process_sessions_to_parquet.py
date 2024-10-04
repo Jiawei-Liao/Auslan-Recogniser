@@ -160,10 +160,10 @@ def process_dataset(dataset_path, json_path, output_dir):
         gc.collect()
 
 if __name__ == '__main__':
-    current_file_directory = os.path.dirname(os.path.abspath(__file__))
-    dataset_path = os.path.join(current_file_directory, 'dataset')
-    json_path = os.path.join(current_file_directory, 'inference_args.json')
-    output_dir = os.path.join(current_file_directory, 'output_parquets')
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    dataset_path = './dataset'
+    json_path = './inference_args.json'
+    output_dir = './output_parquets'
 
     os.makedirs(output_dir, exist_ok=True)
     process_dataset(dataset_path, json_path, output_dir)
