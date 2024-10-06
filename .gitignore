@@ -2,3 +2,4 @@
 /process_data/dataset
 *.parquet
 *.mp4
+*.tfrecords
