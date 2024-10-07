@@ -10,6 +10,7 @@ import AVFoundation
 import Vision
 import CoreML
 import TensorFlowLite
+import SwiftCSV
 
 class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
     
@@ -29,7 +30,7 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
     weak var databaseController: DatabaseProtocol?
     
     var totalFrames: [[Float32]] = []
-    let maxFrames = 16
+    let maxFrames = 160
     
     @IBAction func clearEntry(_ sender: Any) {
         commentsContainerView.text = ""
@@ -95,7 +96,7 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
     // MARK: - Capture
     
     // Helper function to extract points
-    func extractPoints(from observation: VNHumanHandPoseObservation, forHand hand: inout [VNRecognizedPointKey: CGPoint], confidenceThreshold: Float) -> Bool {
+    func extractPoints(from observation: VNHumanHandPoseObservation, bodyObservation: VNHumanBodyPoseObservation?, forHand hand: inout [CGPoint], forBody body: inout [CGPoint], confidenceThreshold: Float) -> Bool {
         do {
             let thumbPoints = try observation.recognizedPoints(forGroupKey: VNHumanHandPoseObservation.JointsGroupName.thumb.rawValue)
             let indexFingerPoints = try observation.recognizedPoints(forGroupKey: VNHumanHandPoseObservation.JointsGroupName.indexFinger.rawValue)
@@ -131,23 +132,67 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
                 }
             
             let pointKeys = [
-                thumbTipPoint, thumbIpPoint, thumbMpPoint, thumbCmcPoint,
-                indexTipPoint, indexDipPoint, indexPipPoint, indexMcpPoint,
-                middleTipPoint, middleDipPoint, middlePipPoint, middleMcpPoint,
-                ringTipPoint, ringDipPoint, ringPipPoint, ringMcpPoint,
-                littleTipPoint, littleDipPoint, littlePipPoint, littleMcpPoint
+                thumbCmcPoint, thumbMpPoint, thumbIpPoint, thumbTipPoint,
+                indexMcpPoint, indexPipPoint, indexDipPoint, indexTipPoint,
+                middleMcpPoint, middlePipPoint, middleDipPoint, middleTipPoint,
+                ringMcpPoint, ringPipPoint, ringDipPoint, ringTipPoint,
+                littleMcpPoint, littlePipPoint, littleDipPoint, littleTipPoint
             ]
-
+            
+            var i = 1
+            
             for point in pointKeys {
                 if point.confidence > confidenceThreshold {
-                    hand[point.identifier] = CGPoint(x: point.location.x, y: 1 - point.location.y)
+                    hand[i] = CGPoint(x: point.location.x, y: point.location.y)
+                    i += 1
                 } else {
                     return false
                 }
             }
+            
+            if let bodyObservation = bodyObservation {
+                let bodyPoints = try bodyObservation.recognizedPoints(forGroupKey: VNHumanBodyPoseObservation.JointsGroupName.all.rawValue)
+                
+                guard let leftEye = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.leftEye.rawValue.rawValue)],
+                      let rightEye = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.rightEye.rawValue.rawValue)],
+                      let leftEar = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.leftEar.rawValue.rawValue)],
+                      let rightEar = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.rightEar.rawValue.rawValue)],
+                      let nose = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.nose.rawValue.rawValue)],
+                      let neck = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.neck.rawValue.rawValue)],
+                      let leftShoulder = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.leftShoulder.rawValue.rawValue)],
+                      let rightShoulder = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.rightShoulder.rawValue.rawValue)],
+                      let leftElbow = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.leftElbow.rawValue.rawValue)],
+                      let rightElbow = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.rightElbow.rawValue.rawValue)],
+                      let leftHip = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.leftHip.rawValue.rawValue)],
+                      let rightHip = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.rightHip.rawValue.rawValue)],
+                      let root = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.root.rawValue.rawValue)],
+                      let leftKnee = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.leftKnee.rawValue.rawValue)],
+                      let rightKnee = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.rightKnee.rawValue.rawValue)],
+                      let leftAnkle = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.leftAnkle.rawValue.rawValue)],
+                      let rightAnkle = bodyPoints[VNRecognizedPointKey(rawValue: VNHumanBodyPoseObservation.JointName.rightAnkle.rawValue.rawValue)]
+                else {
+                    print("Failed body point extraction")
+                    return false
+                }
+                
+                let bodyPointKeys = [
+                    leftEye, rightEye, leftEar, rightEar, nose, neck,
+                    leftShoulder, rightShoulder, leftElbow, rightElbow,
+                    leftHip, rightHip, root,
+                    leftKnee, rightKnee, leftAnkle, rightAnkle
+                ]
+                
+                for (i, point) in bodyPointKeys.enumerated() {
+                    if point.confidence >= 0 /*confidenceThreshold*/ {
+                        body[i] = CGPoint(x: point.location.x, y: point.location.y)
+                    } else {
+                        return false
+                    }
+                }
+            }
 
             if wristPoint.confidence > confidenceThreshold {
-                hand[VNRecognizedPointKey(rawValue: "wrist")] = CGPoint(x: wristPoint.location.x, y: 1 - wristPoint.location.y)
+                hand[0] = CGPoint(x: wristPoint.location.x, y: wristPoint.location.y)
             } else {
                 return false
             }
@@ -162,30 +207,34 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         let handler = VNImageRequestHandler(cmSampleBuffer: sampleBuffer, orientation: .up, options: [:])
+        
+        let bodyPoseRequest = VNDetectHumanBodyPoseRequest()
+        
         do {
-            try handler.perform([handPoseRequest])
+            try handler.perform([handPoseRequest, bodyPoseRequest])
             
-            guard let observations = handPoseRequest.results, observations.count > 1 else {
+            guard let handObservations = handPoseRequest.results, handObservations.count > 0,
+                  let bodyObservations = bodyPoseRequest.results else {
                 DispatchQueue.main.async {
                     //self.cameraViewClass.showPoints([])
                 }
                 return
             }
 
-            var handOne: [VNRecognizedPointKey: CGPoint] = [:]
-            var handTwo: [VNRecognizedPointKey: CGPoint] = [:]
+            var handOne: [CGPoint] = [CGPoint](repeating: CGPoint(), count: 21)
+            var handTwo: [CGPoint] = [CGPoint](repeating: CGPoint(), count: 21)
+            var bodyPoints: [CGPoint] = [CGPoint](repeating: CGPoint(), count: 17)
 
-            let confidenceThreshold: Float = 0.3
+            let confidenceThreshold: Float = 0.2
 
-            let handOneSuccess = extractPoints(from: observations[0], forHand: &handOne, confidenceThreshold: confidenceThreshold)
-            
+            let handOneSuccess = extractPoints(from: handObservations[0], bodyObservation: bodyObservations.first, forHand: &handOne, forBody: &bodyPoints, confidenceThreshold: confidenceThreshold)
             var handTwoSuccess = false
 
-            if observations.count > 1 {
-                handTwoSuccess = extractPoints(from: observations[1], forHand: &handTwo, confidenceThreshold: confidenceThreshold)
+            if handObservations.count > 1 {
+                handTwoSuccess = extractPoints(from: handObservations[1], bodyObservation: nil, forHand: &handTwo, forBody: &bodyPoints, confidenceThreshold: confidenceThreshold)
             }
 
-            if !handOneSuccess || (observations.count > 1 && !handTwoSuccess) {
+            if !handOneSuccess || (handObservations.count > 1 && !handTwoSuccess) {
                 DispatchQueue.main.async {
                     //self.cameraViewClass.showPoints([])
                 }
@@ -193,33 +242,36 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
                 return
             }
 
-            if observations.count == 2 {
-                if let handOneWrist = handOne[VNRecognizedPointKey(rawValue: "wrist")],
-                   let handTwoWrist = handTwo[VNRecognizedPointKey(rawValue: "wrist")] {
+            if handObservations.count == 2 {
+                if true {
+                    let handOneIsLeftHand = handOne[0].x < handTwo[0].x
 
-                    let handOneIsLeftHand = handOneWrist.x < handTwoWrist.x
-
-                    let pointsLeftHand = handOneIsLeftHand ? handOne.values : handTwo.values
-                    let pointsRightHand = handOneIsLeftHand ? handTwo.values : handOne.values
+                    // Bingo. The jumble happens here. handOne.values will return the unordered values.
+                    let pointsLeftHand = handOneIsLeftHand ? handOne : handTwo
+                    let pointsRightHand = handOneIsLeftHand ? handTwo : handOne
 
                     DispatchQueue.main.async {
-                        let pointsLeftHandConverted = pointsLeftHand.map { self.cameraViewClass.previewLayer.layerPointConverted(fromCaptureDevicePoint: $0)
-                        }
+//                        let pointsLeftHandConverted = pointsLeftHand.map {
+//                            self.cameraViewClass.previewLayer.layerPointConverted(fromCaptureDevicePoint: $0)
+//                        }
+//
+//                        let pointsRightHandConverted = pointsRightHand.map {
+//                            self.cameraViewClass.previewLayer.layerPointConverted(fromCaptureDevicePoint: $0)
+//                        }
                         
-                        let pointsRightHandConverted = pointsRightHand.map { self.cameraViewClass.previewLayer.layerPointConverted(fromCaptureDevicePoint: $0)
-                        }
+                        print("Left hand points: \(pointsLeftHand)")
+                        print("Right hand points: \(pointsRightHand)")
+                        print("Body points: \(bodyPoints)")
                         
-                        print("Left hand points: \(pointsLeftHandConverted)")
-                        print("Right hand points: \(pointsRightHandConverted)")
-                        
-                        //self.cameraViewClass.showPoints(pointsLeftHandConverted)
-                        //self.cameraViewClass.showPoints(pointsRightHandConverted)
+//                        self.cameraViewClass.showPoints(pointsLeftHandConverted)
+//                        self.cameraViewClass.showPoints(pointsRightHandConverted)
                         
                         if self.totalFrames.count < self.maxFrames {
-                            let leftHandArray = self.convertToFloat32Array(points: pointsLeftHandConverted)
-                            let rightHandArray = self.convertToFloat32Array(points: pointsRightHandConverted)
+                            let leftHandArray = self.convertToFloat32Array(points: Array(pointsLeftHand))
+                            let rightHandArray = self.convertToFloat32Array(points: Array(pointsRightHand))
+                            let bodyArray = self.convertToFloat32Array(points: Array(bodyPoints))
                             
-                            self.totalFrames.append(leftHandArray + rightHandArray)
+                            self.totalFrames.append(leftHandArray + rightHandArray + bodyArray)
                         } else {
                             self.commentsContainerView.text = self.videoAttempt(videoFrames: self.totalFrames)
                             self.totalFrames = []
@@ -280,9 +332,9 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
 
         var dataFrame: [[Float32]] = []
         
-        let faceArr = Array(repeating: Float32(0.0), count: 468)
-        let poseArr = Array(repeating: Float32(0.0), count: 33)
-        let handArr = Array(repeating: Float32(0.0), count: 21)
+        let faceArr = Array(repeating: Float32.nan, count: 468)
+        let poseArr = Array(repeating: Float32.nan, count: 33)
+        let handArr = Array(repeating: Float32.nan, count: 21)
         
         func extractOddElements(from array: ArraySlice<Float32>) -> [Float32] {
             return array.enumerated().compactMap { (index, element) in
@@ -300,14 +352,18 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
         for frame in videoFrames {
             var row: [Float32] = []
             
+            // TODO: - Enter in the body points instead of the first two poseArr (frame[84] to frame[90])
+            // Note: wrists are considered to be part of body landmarks but I did not include them, hence the 17 points instead of 19
+            //       if needed i may repeat the wrist coordinates to make it 19, still need to map the 19 out to 32 (which is what the model wants)
+
             row.append(contentsOf: faceArr)
-            row.append(contentsOf: extractOddElements(from: frame[0..<42]))  // only odd indices from 0 to 42
+            row.append(contentsOf: extractOddElements(from: frame[0..<42]))  // only odd indices from 0 to 41
             row.append(contentsOf: poseArr)
-            row.append(contentsOf: extractEvenElements(from: frame[0..<42])) // only even indices from 0 to 42
+            row.append(contentsOf: extractEvenElements(from: frame[0..<42])) // only even indices from 0 to 41
             row.append(contentsOf: faceArr)
-            row.append(contentsOf: extractOddElements(from: frame[42..<84])) // only odd indices from 42 to 85
+            row.append(contentsOf: extractOddElements(from: frame[42..<84])) // only odd indices from 42 to 83
             row.append(contentsOf: poseArr)
-            row.append(contentsOf: extractEvenElements(from: frame[42..<84])) // only even indices from 42 to 85
+            row.append(contentsOf: extractEvenElements(from: frame[42..<84])) // only even indices from 42 to 83
             row.append(contentsOf: faceArr)
             row.append(contentsOf: handArr)
             row.append(contentsOf: poseArr)
@@ -332,25 +388,56 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
         }
         
         var options = Interpreter.Options()
-        options.threadCount = 4
+        options.threadCount = 1
         let interpreter: Interpreter
+
+
+        var inputData = Data(copyingBufferOf: flattenedData)
+        
+        // MARK: Uncomment this to run with the csv data.
+        
+//        do {
+//            // Ensure the URL is unwrapped correctly
+//            if let myUrl = Bundle.main.url(forResource: "out", withExtension: "csv") {
+//                // Instantiate the CSV
+//                let csvFile = try CSV<Named>(url: myUrl)
+//
+//                // Get the headers in order from the CSV
+//                let headers = csvFile.header
+//
+//                // Convert rows to arrays of Floats while respecting the header order
+//                let inputArray = csvFile.rows.map { dict in
+//                    headers.map { header in
+//                        Float(dict[header] ?? "") ?? Float.nan
+//                    }
+//                }
+//
+//                // Flatten the array of arrays into a single array and create inputData
+//                inputData = Data(copyingBufferOf: inputArray.flatMap { $0 })
+//
+//            } else {
+//                print("CSV file not found.")
+//            }
+//
+//        } catch {
+//            // Catch and handle errors from parsing invalid CSV
+//            print("Error reading CSV: \(error)")
+//        }
+        
         do {
-            interpreter = try Interpreter(modelPath: modelPath, options: options)
-            //try interpreter.allocateTensors()
-            let predictionFN = try interpreter.signatureRunner(with: "serving_default")
+            interpreter = try Interpreter(modelPath: modelPath)
             
-            let myTensor = Tensor(name: "myTensor", dataType: .float32, shape: Tensor.Shape([self.maxFrames, 1629]), data: Data(copyingBufferOf: dataFrame))
-            let output = try predictionFN.invoke(with: ["inputs": myTensor.data])
-            print(output)
-        } catch {
-            print("Error creating TensorFlow Lite interpreter: \(error)")
-            return nil
-        }
+            
+            print(interpreter.inputTensorCount)
+            print(interpreter.outputTensorCount)
+            
+            try interpreter.resizeInput(at: 0, to: Tensor.Shape(1, inputData.count/4)) // float is 4 bytes, meaning that inputData is 4x too long.
+        
+            
+            try interpreter.allocateTensors()
 
-        // Prepare the input tensor (using all frames, not averaged)
-        let inputData = Data(copyingBufferOf: flattenedData)
-
-        do {
+            
+            
             // Copy input data into the interpreter
             try interpreter.copy(inputData, toInputAt: 0)
             
@@ -369,10 +456,28 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
             // Create a reversed mapping from index to character
             let reversedCharacterMapping = Dictionary(uniqueKeysWithValues: characterMapping.map { ($0.value, $0.key) })
 
-            // Convert prediction indices to characters using the reversed mapping
-            let predictionString = predictionIndices.compactMap { reversedCharacterMapping[$0] }.joined()
+            var resultString = ""
+
+            // Iterate through the output array in chunks of 59
+            let chunkSize = 59
+            for chunkStart in stride(from: 0, to: outputArray.count, by: chunkSize) {
+                // Get the current chunk (subarray of 59 values)
+                let chunk = Array(outputArray[chunkStart..<min(chunkStart + chunkSize, outputArray.count)])
+                
+                // Find the index where the value is 1
+                if let index = chunk.firstIndex(of: 1) {
+                    // Look up the corresponding character from the reversed map
+                    if let character = reversedCharacterMapping[index] {
+                        // Append the character to the result string
+                        resultString.append(character)
+                    }
+                }
+            }
+
+            // Print the final result string
+            print("Resulting String:", resultString)
             
-            return predictionString
+            return resultString
         } catch {
             print("Error running the model: \(error)")
             return nil
