@@ -176,10 +176,12 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
                 }
                 
                 let bodyPointKeys = [
-                    leftEye, rightEye, leftEar, rightEar, nose, neck,
+                    nose, leftEye, leftEye, leftEye, rightEye, rightEye,
+                    rightEye, leftEar, rightEar, neck, neck,
                     leftShoulder, rightShoulder, leftElbow, rightElbow,
-                    leftHip, rightHip, root,
-                    leftKnee, rightKnee, leftAnkle, rightAnkle
+                    neck, neck, neck, neck, neck, neck, neck, neck,
+                    leftHip, rightHip, leftKnee, rightKnee, leftAnkle, rightAnkle,
+                    leftAnkle, rightAnkle, leftAnkle, rightAnkle
                 ]
                 
                 for (i, point) in bodyPointKeys.enumerated() {
@@ -223,7 +225,7 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
 
             var handOne: [CGPoint] = [CGPoint](repeating: CGPoint(), count: 21)
             var handTwo: [CGPoint] = [CGPoint](repeating: CGPoint(), count: 21)
-            var bodyPoints: [CGPoint] = [CGPoint](repeating: CGPoint(), count: 17)
+            var bodyPoints: [CGPoint] = [CGPoint](repeating: CGPoint(), count: 33)
 
             let confidenceThreshold: Float = 0.2
 
@@ -249,6 +251,16 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
                     // Bingo. The jumble happens here. handOne.values will return the unordered values.
                     let pointsLeftHand = handOneIsLeftHand ? handOne : handTwo
                     let pointsRightHand = handOneIsLeftHand ? handTwo : handOne
+                    
+                    // Adjustments as needed by the model
+                    bodyPoints[15] = pointsLeftHand[0]
+                    bodyPoints[16] = pointsRightHand[0]
+                    bodyPoints[17] = pointsLeftHand[16]
+                    bodyPoints[18] = pointsRightHand[16]
+                    bodyPoints[19] = pointsLeftHand[7]
+                    bodyPoints[20] = pointsRightHand[7]
+                    bodyPoints[21] = pointsLeftHand[3]
+                    bodyPoints[22] = pointsRightHand[3]
 
                     DispatchQueue.main.async {
 //                        let pointsLeftHandConverted = pointsLeftHand.map {
@@ -351,18 +363,14 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
         // Process each frame in the video
         for frame in videoFrames {
             var row: [Float32] = []
-            
-            // TODO: - Enter in the body points instead of the first two poseArr (frame[84] to frame[90])
-            // Note: wrists are considered to be part of body landmarks but I did not include them, hence the 17 points instead of 19
-            //       if needed i may repeat the wrist coordinates to make it 19, still need to map the 19 out to 32 (which is what the model wants)
 
             row.append(contentsOf: faceArr)
             row.append(contentsOf: extractOddElements(from: frame[0..<42]))  // only odd indices from 0 to 41
-            row.append(contentsOf: poseArr)
+            row.append(contentsOf: extractOddElements(from: frame[85..<118]))  // only odd indices from 85 to 117
             row.append(contentsOf: extractEvenElements(from: frame[0..<42])) // only even indices from 0 to 41
             row.append(contentsOf: faceArr)
             row.append(contentsOf: extractOddElements(from: frame[42..<84])) // only odd indices from 42 to 83
-            row.append(contentsOf: poseArr)
+            row.append(contentsOf: extractEvenElements(from: frame[85..<118])) // only even indices from 85 to 117
             row.append(contentsOf: extractEvenElements(from: frame[42..<84])) // only even indices from 42 to 83
             row.append(contentsOf: faceArr)
             row.append(contentsOf: handArr)
@@ -427,17 +435,13 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
         do {
             interpreter = try Interpreter(modelPath: modelPath)
             
-            
             print(interpreter.inputTensorCount)
             print(interpreter.outputTensorCount)
             
             try interpreter.resizeInput(at: 0, to: Tensor.Shape(1, inputData.count/4)) // float is 4 bytes, meaning that inputData is 4x too long.
         
-            
             try interpreter.allocateTensors()
 
-            
-            
             // Copy input data into the interpreter
             try interpreter.copy(inputData, toInputAt: 0)
             
@@ -498,15 +502,6 @@ class MainViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
         return points.flatMap { [Float32($0.x), Float32($0.y)] }
     }
 }
-
-
-
-
-
-
-
-
-
 
 // MARK: - Extensions
 
