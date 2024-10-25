@@ -1,6 +1,6 @@
-/process_data/output_parquets
-/process_data/dataset
+/fyp-train/__pycache__
+/fyp-train/process_data/output_parquets
+/fyp-train/process_data/dataset
 *.parquet
 *.mp4
 *.tfrecords
-/__pycache__
