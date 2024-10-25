@@ -3,3 +3,4 @@
 *.parquet
 *.mp4
 *.tfrecords
+/__pycache__
