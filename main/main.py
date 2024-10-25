@@ -6,6 +6,7 @@ import numpy as np
 import json
 from get_the_data import get_data_from_pq, get_the_data
 
+
 def main():
     # parquet_attempt()
     video_attempt()
