@@ -7,16 +7,16 @@ Trained a model with ASL and Auslan dataset.
 Source: https://www.kaggle.com/competitions/asl-fingerspelling/discussion/434588
 
 # File Structure
-1. fyp-initial-experiments
+1. /fyp-initial-experiments:<br>
 This folder contains our early experiments on testing mediapipe and creating several model architectures and attempting to train them.
 
-2. fyp-inference-tests
+2. /fyp-inference-tests:<br>
 This folder contains the files relating to investigating what the parquet files are and getting Sohn's model working with live camera input.
 
-3. /fyp-train
+3. /fyp-train:<br>
 This folder contains the files relating to processing the video data, converting it to parquets and tfrecords and training it on Sohn's model.
 
-4. /ios-application
+4. /ios-application:<br>
 This folder contains the files relating to the ios application.
 
 # Sources
