@@ -1,9 +1,9 @@
-# Codebase For Our FYP
+# FYP: Auslan Recogniser iOS Application
 Created an iOS app which uses the model to recognise Auslan fingerspellings.
 ![iOS Application](/readme/ios-application.png)
 
 Trained a model with ASL and Auslan dataset.
-![Sohn's Model Architecture](/readme/Sohn's%20Model%20Architrecture.png)
+![Sohn's Model Architecture](/readme/Sohn's%20Model%20Architrecture.jpg)
 Source: https://www.kaggle.com/competitions/asl-fingerspelling/discussion/434588
 
 # File Structure
